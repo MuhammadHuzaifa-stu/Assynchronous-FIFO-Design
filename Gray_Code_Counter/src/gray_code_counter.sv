@@ -8,21 +8,22 @@ module gray_code_counter #(
 );
 
     logic [WIDTH-1:0] binary_count;
+    logic [WIDTH-1:0] binary_count_next;
 
-    // Convert binary count to Gray code
-    assign gray_code = (binary_count >> 1) ^ binary_count;
+
+    logic [WIDTH-1:0] gray_code_reg;
+    logic [WIDTH-1:0] gray_code_next;
+
+    assign binary_count_next = binary_count + 1;
+    assign gray_code_next    = (binary_count_next >> 1) ^ binary_count_next;
 
     // Binary counter
     always_ff @(posedge clk or negedge arst_n) 
     begin
         if (!arst_n) 
-        begin
-            binary_count <= '0;
-        end 
+            {gray_code, binary_count} <= '0;
         else 
-        begin
-            binary_count <= binary_count + 1;
-        end
+            {gray_code, binary_count} <= {gray_code_next, binary_count_next};
     end
 
 endmodule
